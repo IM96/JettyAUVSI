@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -31,7 +32,7 @@ public class RunServlet extends HttpServlet {
         String reqUrl = req.getRequestURI();
         PrintWriter out = resp.getWriter();
         int formatStatus = checkFormat(reqUrl);
-
+        //System.out.println("Request: " + reqUrl);
         if(formatStatus == 0){
             JSONObject obj = new JSONObject();
             obj.put("success","true" );
@@ -43,12 +44,24 @@ public class RunServlet extends HttpServlet {
             out.write(msg);
             String urls[] = reqUrl.split("/");
             System.out.println("Konesksi berhasil misi " +urls[2] +" run");
+            StringBuffer jb = new StringBuffer();
+            String line = null;
+            try {
+                BufferedReader reader = req.getReader();
+                while ((line = reader.readLine()) != null)
+                    jb.append(line);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Isi pesan ;" + jb);
         }
         else if(formatStatus == 1){
             resp.setStatus((HttpServletResponse.SC_NOT_FOUND));
+            System.out.println("Empty course or empty team name");
         }
         else{
             resp.setStatus((HttpServletResponse.SC_BAD_REQUEST));
+            System.out.println("Wrong format start or stop run");
         }
     }
     protected int checkFormat(String url){

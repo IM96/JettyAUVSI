@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
@@ -30,6 +31,16 @@ public class FollowLeaderServlet extends HttpServlet {
             resp.setHeader("Server",Jetty.VERSION);
             out.write(msg);
             System.out.println("Konesksi berhasil misi follow leader");
+            StringBuffer jb = new StringBuffer();
+            String line = null;
+            try {
+                BufferedReader reader = req.getReader();
+                while ((line = reader.readLine()) != null)
+                    jb.append(line);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Isi pesan :" + jb);
         }
         else if(formatStatus == 1){
             resp.setStatus((HttpServletResponse.SC_NOT_FOUND));

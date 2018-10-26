@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
-
+import java.io.BufferedReader;
 public class HeartbeatServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Collection<String> fields = resp.getHeaderNames();
@@ -40,7 +40,16 @@ public class HeartbeatServlet extends HttpServlet {
             resp.setHeader("Content-Length", String.valueOf(msg.length()));
             resp.setHeader("Server",Jetty.VERSION);
             out.write(msg);
-            System.out.println("Konesksi berhasil heartbeat");
+            StringBuffer jb = new StringBuffer();
+            String line = null;
+            try {
+                BufferedReader reader = req.getReader();
+                while ((line = reader.readLine()) != null)
+                    jb.append(line);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Konesksi berhasil heartbeat\nIsi pesan : " + jb);
         }
         else if(formatStatus == 1){
             resp.setStatus((HttpServletResponse.SC_NOT_FOUND));
